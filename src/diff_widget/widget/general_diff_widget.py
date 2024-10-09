@@ -1,6 +1,4 @@
-from PySide6.QtWidgets import (
-    QWidget, QVBoxLayout, QSplitter
-)
+from PySide6.QtWidgets import QWidget, QVBoxLayout, QSplitter
 from PySide6.QtCore import Qt
 
 from src.diff_widget.script import compare_files
@@ -40,11 +38,6 @@ class DiffWidget(QWidget):
             )
 
         self.set_logical_vertical_scroll_bar()
-
-    def wheelEvent(self, event):
-        if event.modifiers() == Qt.ControlModifier:
-            self.scaled_font_size(y_mouse_rotation=event.angleDelta().y())
-            event.accept()
 
     def equals(self, index1: int, index2: int, text: str):
         text = text.replace('\n', '')
