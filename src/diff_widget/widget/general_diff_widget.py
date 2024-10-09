@@ -36,6 +36,8 @@ class DiffWidget(QWidget):
                 sequence_percent=90
             )
 
+        self.set_logical_vertical_scroll_bar()
+
     def equals(self, index1: int, index2: int, text: str):
         text = text.replace('\n', '')
         self.current_file.text_edit.append(text)
@@ -60,3 +62,33 @@ class DiffWidget(QWidget):
         self.current_file.line.append('')
         self.modified_file.text_edit.append(text.replace('\n', ''))
         self.modified_file.line.append(str(index))
+
+    def set_logical_vertical_scroll_bar(self) -> None:
+        """Set logical vertical scroll bar"""
+        self.current_file.text_edit.verticalScrollBar().valueChanged.connect(
+            self.current_file.line.verticalScrollBar().setValue)
+        self.current_file.text_edit.verticalScrollBar().valueChanged.connect(
+            self.modified_file.text_edit.verticalScrollBar().setValue)
+        self.current_file.text_edit.verticalScrollBar().valueChanged.connect(
+            self.modified_file.line.verticalScrollBar().setValue)
+
+        self.current_file.line.verticalScrollBar().valueChanged.connect(
+            self.current_file.text_edit.verticalScrollBar().setValue)
+        self.current_file.line.verticalScrollBar().valueChanged.connect(
+            self.modified_file.text_edit.verticalScrollBar().setValue)
+        self.current_file.line.verticalScrollBar().valueChanged.connect(
+            self.modified_file.line.verticalScrollBar().setValue)
+
+        self.modified_file.text_edit.verticalScrollBar().valueChanged.connect(
+            self.current_file.line.verticalScrollBar().setValue)
+        self.modified_file.text_edit.verticalScrollBar().valueChanged.connect(
+            self.current_file.text_edit.verticalScrollBar().setValue)
+        self.modified_file.text_edit.verticalScrollBar().valueChanged.connect(
+            self.modified_file.line.verticalScrollBar().setValue)
+
+        self.modified_file.line.verticalScrollBar().valueChanged.connect(
+            self.current_file.line.verticalScrollBar().setValue)
+        self.modified_file.line.verticalScrollBar().valueChanged.connect(
+            self.current_file.text_edit.verticalScrollBar().setValue)
+        self.modified_file.line.verticalScrollBar().valueChanged.connect(
+            self.modified_file.text_edit.verticalScrollBar().setValue)
