@@ -4,15 +4,17 @@ from PySide6.QtWidgets import (
 from PySide6.QtGui import QTextOption
 from PySide6.QtCore import Qt
 
+from src.diff_widget.script import compare_files
+
 
 class ABCFile(QWidget):
-    def __init__(self, file, *args, **kwargs):
+    def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
-        self.text: str = file.read()
+        # self.text: str = file.read()
 
         self.text_edit = QTextEdit()
-        self.text_edit.append(self.text)
+        # self.text_edit.append(self.text)
         self.text_edit.setWordWrapMode(QTextOption.NoWrap)
 
         self.line = QTextEdit()
@@ -38,15 +40,21 @@ class ModifiedFile(ABCFile):
 
 
 class DiffWidget(QWidget):
-    def __init__(self, files, *args, **kwargs):  # fixme: typing
+    def __init__(self, files, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
         with (
                 open(files.current_file, encoding='utf-8') as current_file,
                 open(files.modified_file, encoding='utf-8') as modified_file,
         ):
-            self.current_file = CurrentFile(current_file)
-            self.modified_file = ModifiedFile(modified_file)
+            compare_files(
+                lines1=current_file.readlines(),
+                lines2=modified_file.readlines(),
+                sequence_percent=90
+            )
+
+        self.current_file = CurrentFile()
+        self.modified_file = ModifiedFile()
 
         splitter = QSplitter(Qt.Horizontal)
         splitter.addWidget(self.current_file)
