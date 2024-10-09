@@ -70,16 +70,24 @@ class DiffWidget(QWidget):
     def equals(self, index1: int, index2: int, text: str):
         text = text.replace('\n', '')
         self.current_file.text_edit.append(text)
+        self.current_file.line.append(str(index1))
         self.modified_file.text_edit.append(text)
+        self.modified_file.line.append(str(index2))
 
     def modified(self, index1: int, index2: int, text1: str, text2: str):
         self.current_file.text_edit.append(text1.replace('\n', ''))
+        self.current_file.line.append(str(index1))
         self.modified_file.text_edit.append(text2.replace('\n', ''))
+        self.modified_file.line.append(str(index2))
 
     def remove(self, index: int, text: str):
         self.current_file.text_edit.append(text.replace('\n', ''))
+        self.current_file.line.append(str(index))
         self.modified_file.text_edit.append('')
+        self.modified_file.line.append('')
 
     def added(self, index: int, text: str):
         self.current_file.text_edit.append('')
+        self.current_file.line.append('')
         self.modified_file.text_edit.append(text.replace('\n', ''))
+        self.modified_file.line.append(str(index))
