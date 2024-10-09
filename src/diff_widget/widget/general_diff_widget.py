@@ -1,42 +1,11 @@
 from PySide6.QtWidgets import (
-    QWidget, QVBoxLayout, QSplitter, QTextEdit, QHBoxLayout
+    QWidget, QVBoxLayout, QSplitter
 )
-from PySide6.QtGui import QTextOption
 from PySide6.QtCore import Qt
 
 from src.diff_widget.script import compare_files
-
-
-class ABCFile(QWidget):
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-
-        # self.text: str = file.read()
-
-        self.text_edit = QTextEdit()
-        # self.text_edit.append(self.text)
-        self.text_edit.setWordWrapMode(QTextOption.NoWrap)
-
-        self.line = QTextEdit()
-        self.line.setFixedWidth(50)
-
-        self.layout = QHBoxLayout(self)
-        self.draw()
-
-    def draw(self):
-        pass
-
-
-class CurrentFile(ABCFile):
-    def draw(self):
-        self.layout.addWidget(self.text_edit)
-        self.layout.addWidget(self.line)
-
-
-class ModifiedFile(ABCFile):
-    def draw(self):
-        self.layout.addWidget(self.line)
-        self.layout.addWidget(self.text_edit)
+from .current_file_widget import CurrentFile
+from .modified_file_widget import ModifiedFile
 
 
 class DiffWidget(QWidget):
