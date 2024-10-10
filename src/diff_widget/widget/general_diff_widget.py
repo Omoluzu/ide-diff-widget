@@ -219,6 +219,8 @@ class DiffWidget(QWidget):
         for key, value in self.blocks_hide_lines['block_id'].items():
             if value == index_position_block:
                 block_id = key
+                del self.blocks_hide_lines['block_id'][block_id]
+                break
 
         self.current_file.text_edit.delete_lines([index_position_block])
 
@@ -227,14 +229,18 @@ class DiffWidget(QWidget):
             if line['block_id'] == block_id:
                 self.current_file.text_edit.add_text(
                     position=index_position_block + index_position_new_text,
-                    block_format=block_format.Simple, text=line['text']  # todo: придумать своей цвет
+                    block_format=block_format.OpenBlock, text=line['text']
                 )
                 self.modified_file.text_edit.add_text(
                     position=index_position_block + index_position_new_text,
-                    block_format=block_format.Simple, text=line['text']  # todo: придумать своей цвет
+                    block_format=block_format.OpenBlock, text=line['text']
                 )
                 index_position_new_text += 1
 
-        # todo: удалить информацию текущего блока
+        index_offset = index_position_new_text - 1
+
+        for key, value in self.blocks_hide_lines['block_id'].items():
+            if key > block_id:
+                self.blocks_hide_lines['block_id'][key] = value + index_offset
+
         # todo: обновить номера строк (предварительно сохранив их)
-        # todo: обновить индексы для других hide_lines_block
