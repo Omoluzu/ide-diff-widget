@@ -1,4 +1,3 @@
-
 from PySide6.QtWidgets import QTextEdit
 from PySide6.QtGui import QTextCursor, QTextBlockFormat
 from PySide6.QtCore import Qt
@@ -32,3 +31,49 @@ class ABCTextEdit(QTextEdit):
             cursor = self.textCursor()
             cursor.mergeBlockFormat(block_format())
 
+    def get_text_from_line(self, line_number: int):
+        cursor = self.textCursor()
+        cursor.movePosition(QTextCursor.Start)
+
+        for _ in range(line_number):
+            cursor.movePosition(QTextCursor.Down)
+
+        return cursor.block().text()
+
+    def delete_lines(self, lines_to_delete):
+        cursor = self.textCursor()
+        cursor.movePosition(QTextCursor.Start)
+        lines_deleted = 0
+
+        for line in range(self.document().blockCount() + 1):
+            if line in lines_to_delete:
+                cursor.movePosition(QTextCursor.StartOfBlock)
+                cursor.movePosition(QTextCursor.EndOfBlock, QTextCursor.KeepAnchor)
+                cursor.removeSelectedText()
+
+                cursor.movePosition(QTextCursor.EndOfBlock)
+                cursor.deleteChar()
+                lines_deleted += 1
+
+            else:
+                cursor.movePosition(QTextCursor.Down)
+
+            if lines_deleted == len(lines_to_delete):
+                break
+
+    def add_lines(
+            self, indices: list[int],
+            block_format: QTextBlockFormat,
+            text: str = " "
+    ):
+        cursor = self.textCursor()
+        cursor.movePosition(QTextCursor.Start)
+
+        for line in range(1, self.document().blockCount() + 1):
+            cursor.movePosition(QTextCursor.Down)
+
+            if line in indices:
+                cursor.insertText(text + "\n")
+                cursor.movePosition(QTextCursor.Up)
+                cursor.mergeBlockFormat(block_format())
+                cursor.movePosition(QTextCursor.Down)
