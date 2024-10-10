@@ -2,7 +2,8 @@ def accumulate_result():
     old_info = None
 
     new_result = {
-        'block_id': {}
+        'block_id': {},
+        'line_id': {}
     }
     block_id = 0
 
@@ -18,7 +19,7 @@ def accumulate_result():
             block_id += 1
             new_result['block_id'][block_id] = info
 
-        new_result[info] = {'block_id': block_id}
+        new_result['line_id'][info] = {'block_id': block_id}
         old_info = info
 
 

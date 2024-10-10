@@ -25,6 +25,15 @@ class ABCTextEdit(QTextEdit):
             self.verticalScrollBar().setValue(
                 self.verticalScrollBar().value() + (-20 if y > 0 else 20))
 
+    def mousePressEvent(self, event):
+        if event.button() == Qt.LeftButton:
+            cursor = self.cursorForPosition(event.pos())
+            line_number = cursor.blockNumber()
+
+            if line_number in self.parent().parent().parent().index_hide_lines:
+                self.parent().parent().parent().show_hide_lines_block(
+                    index_position_block=line_number)
+
     def set_text(self, text: str, block_format: QTextBlockFormat) -> None:
         self.append(text)
         if block_format:
@@ -75,6 +84,23 @@ class ABCTextEdit(QTextEdit):
                 cursor.movePosition(QTextCursor.Up)
                 cursor.mergeBlockFormat(block_format())
                 cursor.movePosition(QTextCursor.Down)
+
+            cursor.movePosition(QTextCursor.Down)
+
+    def add_text(
+            self, position: int,
+            block_format: QTextBlockFormat,
+            text: str = " "
+    ):
+        cursor = self.textCursor()
+        cursor.movePosition(QTextCursor.Start)
+
+        for line in range(self.document().blockCount() + 1):
+            if line == position:
+                cursor.insertText(text + "\n")
+                cursor.movePosition(QTextCursor.Up)
+                cursor.mergeBlockFormat(block_format())
+                break
 
             cursor.movePosition(QTextCursor.Down)
 

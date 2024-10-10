@@ -29,6 +29,7 @@ class DiffWidget(QWidget):
         self.current_font_size = 10
         self.line_index = 0
         self.show_lines: list[int] = []
+        self.blocks_hide_lines = {}
 
         self.current_file = CurrentFile()
         self.current_file.scaled_font_size(self.current_font_size)
@@ -167,11 +168,11 @@ class DiffWidget(QWidget):
             margin_show_lines.add(line)
 
         hide_lines = list(margin_show_lines ^ set(range(self.line_index + 1)))
-        blocks_hide_lines = script.break_into_blocks(hide_lines)
+        self.blocks_hide_lines = script.break_into_blocks(hide_lines)
 
         for line in hide_lines[::-1]:
             text = self.current_file.text_edit.get_text_from_line(line)
-            blocks_hide_lines[line]['text'] = text
+            self.blocks_hide_lines['line_id'][line]['text'] = text
 
         self.current_file.text_edit.delete_lines(hide_lines)
         self.current_file.line.delete_lines(hide_lines)
@@ -179,8 +180,10 @@ class DiffWidget(QWidget):
         self.modified_file.line.delete_lines(hide_lines)
 
         indices = []
-        for block, start_number in blocks_hide_lines['block_id'].items():
-            indices.append(start_number - hide_lines.index(start_number))
+        for block, start_number in self.blocks_hide_lines['block_id'].items():
+            block_start_pos = start_number - hide_lines.index(start_number)
+            indices.append(block_start_pos)
+            self.blocks_hide_lines['block_id'][block] = block_start_pos + block
 
         self.current_file.text_edit.add_lines(
             indices, block_format.Diff, "@@ __,__ @@")
@@ -190,7 +193,7 @@ class DiffWidget(QWidget):
         self.modified_file.line.add_lines(indices, block_format.Diff)
 
         # print(hide_lines)
-        # print(blocks_hide_lines)
+        # print(indices)
         #
         # data = {
         #     'block_id': {
@@ -207,3 +210,31 @@ class DiffWidget(QWidget):
         #     }
         # }
 
+    @property
+    def index_hide_lines(self) -> list[int]:
+        return list(self.blocks_hide_lines['block_id'].values())
+
+    def show_hide_lines_block(self, index_position_block: int):
+        block_id = None
+        for key, value in self.blocks_hide_lines['block_id'].items():
+            if value == index_position_block:
+                block_id = key
+
+        self.current_file.text_edit.delete_lines([index_position_block])
+
+        index_position_new_text = 0
+        for line in self.blocks_hide_lines['line_id'].values():
+            if line['block_id'] == block_id:
+                self.current_file.text_edit.add_text(
+                    position=index_position_block + index_position_new_text,
+                    block_format=block_format.Simple, text=line['text']  # todo: придумать своей цвет
+                )
+                self.modified_file.text_edit.add_text(
+                    position=index_position_block + index_position_new_text,
+                    block_format=block_format.Simple, text=line['text']  # todo: придумать своей цвет
+                )
+                index_position_new_text += 1
+
+        # todo: удалить информацию текущего блока
+        # todo: обновить номера строк (предварительно сохранив их)
+        # todo: обновить индексы для других hide_lines_block
