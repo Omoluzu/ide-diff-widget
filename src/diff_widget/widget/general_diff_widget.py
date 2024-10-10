@@ -35,7 +35,7 @@ class DiffWidget(QWidget):
                 func_modified=self.modified,
                 func_remove=self.remove,
                 func_added=self.added,
-                sequence_percent=90
+                sequence_percent=files.sequence_percent
             )
 
         self.set_logical_vertical_scroll_bar()

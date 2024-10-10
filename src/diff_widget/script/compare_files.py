@@ -1,16 +1,29 @@
 from difflib import SequenceMatcher
+from typing import Callable
 
 
 def compare_files(
-        lines1,
-        lines2,
-        func_equals,
-        func_modified,
-        func_remove,
-        func_added,
-        sequence_percent: int = 80,
-):
-    """Сравнивает два файла и выводит различия в формате git diff."""
+        lines1: list[str],
+        lines2: list[str],
+        func_equals: Callable[[int, int, str], None],
+        func_modified: Callable[[int, int, str, str], None],
+        func_remove: Callable[[int, str], None],
+        func_added: Callable[[int, str], None],
+        sequence_percent: float = .8,
+) -> None:
+    """Compares two files and outputs the differences in git diff format.
+
+    The matches found are passed to the corresponding passed functions
+
+    :param lines1: Contents of the list with file lines
+    :param lines2: Contents of the list with file lines
+    :param func_equals: Function if equality is found
+    :param func_modified: Function if the percentage of changes specified in
+        sequence_percent is found
+    :param func_remove: Function if delete row
+    :param func_added: Function if added row
+    :param sequence_percent: Finding the percentage of matches where 1 is 100%
+    """
     index1 = index2 = 0
 
     while True:
@@ -38,8 +51,8 @@ def compare_files(
             index1, index2 = index1 + 1, index2 + 1
             continue
 
-        percentage_match = SequenceMatcher(None, line1, line2).ratio() * 100
-        if percentage_match > sequence_percent:
+        percentage_match = SequenceMatcher(None, line1, line2).ratio()
+        if percentage_match >= sequence_percent:
             func_modified(index1, index2, line1, line2)
             index1, index2 = index1 + 1, index2 + 1
             continue
@@ -49,8 +62,8 @@ def compare_files(
             while True:
                 for ii2 in range(index + 1):
                     for ii1 in range(index + 1):
-                        percentage_match = SequenceMatcher(None, lines1[index1 + ii1], lines2[index2 + ii2]).ratio() * 100
-                        if percentage_match > sequence_percent:
+                        percentage_match = SequenceMatcher(None, lines1[index1 + ii1], lines2[index2 + ii2]).ratio()
+                        if percentage_match >= sequence_percent:
                             for iii2 in range(ii2):
                                 func_added(index2 + iii2, lines2[index2 + iii2])
                             for iii1 in range(ii1):
