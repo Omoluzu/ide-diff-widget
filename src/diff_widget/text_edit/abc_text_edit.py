@@ -69,11 +69,12 @@ class ABCTextEdit(QTextEdit):
         cursor = self.textCursor()
         cursor.movePosition(QTextCursor.Start)
 
-        for line in range(1, self.document().blockCount() + 1):
-            cursor.movePosition(QTextCursor.Down)
-
+        for line in range(self.document().blockCount() + 1):
             if line in indices:
                 cursor.insertText(text + "\n")
                 cursor.movePosition(QTextCursor.Up)
                 cursor.mergeBlockFormat(block_format())
                 cursor.movePosition(QTextCursor.Down)
+
+            cursor.movePosition(QTextCursor.Down)
+
