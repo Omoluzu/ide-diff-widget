@@ -192,24 +192,6 @@ class DiffWidget(QWidget):
             indices, block_format.Diff, "@@ __,__ @@")
         self.modified_file.line.add_lines(indices, block_format.Diff)
 
-        # print(hide_lines)
-        # print(indices)
-        #
-        # data = {
-        #     'block_id': {
-        #         0: 18,
-        #         1: 37
-        #     },
-        #     18: {
-        #         'block_id': 0,
-        #         'text': '    def draw(self):'
-        #     },
-        #
-        #     37:  {
-        #         'block_id': 1
-        #     }
-        # }
-
     @property
     def index_hide_lines(self) -> list[int]:
         return list(self.blocks_hide_lines['block_id'].values())
@@ -223,6 +205,7 @@ class DiffWidget(QWidget):
                 break
 
         self.current_file.text_edit.delete_lines([index_position_block])
+        self.modified_file.text_edit.delete_lines([index_position_block])
 
         index_position_new_text = 0
         for line in self.blocks_hide_lines['line_id'].values():
