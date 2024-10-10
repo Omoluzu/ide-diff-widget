@@ -40,29 +40,20 @@ class DiffWidget(QWidget):
         self.set_logical_vertical_scroll_bar()
 
     def equals(self, index1: int, index2: int, text: str):
-        text = text.replace('\n', '')
-        self.current_file.text_edit.append(text)
-        self.current_file.line.append(str(index1))
-        self.modified_file.text_edit.append(text)
-        self.modified_file.line.append(str(index2))
+        self.current_file.set_text(str(index1), text.replace('\n', ''))
+        self.modified_file.set_text(str(index2), text.replace('\n', ''))
 
     def modified(self, index1: int, index2: int, text1: str, text2: str):
-        self.current_file.text_edit.append(text1.replace('\n', ''))
-        self.current_file.line.append(str(index1))
-        self.modified_file.text_edit.append(text2.replace('\n', ''))
-        self.modified_file.line.append(str(index2))
+        self.current_file.set_text(str(index1), text1.replace('\n', ''))
+        self.modified_file.set_text(str(index2), text2.replace('\n', ''))
 
     def remove(self, index: int, text: str):
-        self.current_file.text_edit.append(text.replace('\n', ''))
-        self.current_file.line.append(str(index))
-        self.modified_file.text_edit.append('')
-        self.modified_file.line.append('')
+        self.current_file.set_text(str(index), text.replace('\n', ''))  # todo: color red
+        self.modified_file.set_text('', '')  # todo: color grey
 
     def added(self, index: int, text: str):
-        self.current_file.text_edit.append('')
-        self.current_file.line.append('')
-        self.modified_file.text_edit.append(text.replace('\n', ''))
-        self.modified_file.line.append(str(index))
+        self.current_file.set_text('', '')  # todo: color grey
+        self.modified_file.set_text(str(index), text.replace('\n', ''))  # todo: color green
 
     def set_logical_vertical_scroll_bar(self) -> None:
         """Set logical vertical scroll bar"""

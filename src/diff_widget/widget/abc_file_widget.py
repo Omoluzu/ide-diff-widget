@@ -1,3 +1,5 @@
+from abc import abstractmethod
+
 from PySide6.QtWidgets import QWidget, QTextEdit, QHBoxLayout
 from PySide6.QtGui import QTextOption, QTextCursor
 from PySide6.QtCore import Qt
@@ -27,7 +29,10 @@ class ABCTextEdit(QTextEdit):
 
 
 class EditTextEdit(ABCTextEdit):
-    pass
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.setWordWrapMode(QTextOption.NoWrap)
+        self.setHorizontalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
 
 
 class LineTextEdit(ABCTextEdit):
@@ -48,15 +53,12 @@ class ABCFile(QWidget):
         super().__init__(*args, **kwargs)
 
         self.text_edit = EditTextEdit()
-        self.text_edit.setWordWrapMode(QTextOption.NoWrap)
-        self.text_edit.setHorizontalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
-
         self.line = LineTextEdit()
-        self.line.setFixedWidth(50)
 
         self.layout = QHBoxLayout(self)
         self.draw()
 
+    @abstractmethod
     def draw(self):
         pass
 
@@ -66,3 +68,12 @@ class ABCFile(QWidget):
         """
         self.text_edit.scaled_font_size(new_font_size)
         self.line.scaled_font_size(new_font_size)
+
+    def set_text(self, line_number: str, text: str, color=None) -> None:
+        """Set text TextWidget and set line number and color
+        :param line_number: line number
+        :param text: added text
+        :param color: color text
+        """
+        self.text_edit.append(text)
+        self.line.append(line_number)
