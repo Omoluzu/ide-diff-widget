@@ -27,11 +27,11 @@ class ABCFile(QWidget):
         self.text_edit.scaled_font_size(new_font_size)
         self.line.scaled_font_size(new_font_size)
 
-    def set_text(self, line_number: str, text: str, color=None) -> None:
+    def set_text(self, line_number: str, text: str, block_format=None) -> None:
         """Set text TextWidget and set line number and color
         :param line_number: line number
         :param text: added text
-        :param color: color text
+        :param block_format: color text
         """
-        self.text_edit.append(text)
-        self.line.append(line_number)
+        self.text_edit.set_text(text, block_format)
+        self.line.set_text(line_number, block_format)

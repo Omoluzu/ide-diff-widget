@@ -4,6 +4,7 @@ from PySide6.QtCore import Qt
 from src.diff_widget.script import compare_files
 from .current_file_widget import CurrentFile
 from .modified_file_widget import ModifiedFile
+from src.diff_widget import block_format
 
 
 class DiffWidget(QWidget):
@@ -40,20 +41,48 @@ class DiffWidget(QWidget):
         self.set_logical_vertical_scroll_bar()
 
     def equals(self, index1: int, index2: int, text: str):
-        self.current_file.set_text(str(index1), text.replace('\n', ''))
-        self.modified_file.set_text(str(index2), text.replace('\n', ''))
+        self.current_file.set_text(
+            line_number=str(index1),
+            text=text.replace('\n', ''),
+            block_format=block_format.Simple)
+
+        self.modified_file.set_text(
+            line_number=str(index2),
+            text=text.replace('\n', ''),
+            block_format=block_format.Simple)
 
     def modified(self, index1: int, index2: int, text1: str, text2: str):
-        self.current_file.set_text(str(index1), text1.replace('\n', ''))
-        self.modified_file.set_text(str(index2), text2.replace('\n', ''))
+        self.current_file.set_text(
+            line_number=str(index1),
+            text=text1.replace('\n', ''),
+            block_format=block_format.Simple)
+
+        self.modified_file.set_text(
+            line_number=str(index2),
+            text=text2.replace('\n', ''),
+            block_format=block_format.Simple)
 
     def remove(self, index: int, text: str):
-        self.current_file.set_text(str(index), text.replace('\n', ''))  # todo: color red
-        self.modified_file.set_text('', '')  # todo: color grey
+        self.current_file.set_text(
+            line_number=str(index),
+            text=text.replace('\n', ''),
+            block_format=block_format.Minus)
+
+        self.modified_file.set_text(
+            line_number='',
+            text='',
+            block_format=block_format.Diff)
 
     def added(self, index: int, text: str):
-        self.current_file.set_text('', '')  # todo: color grey
-        self.modified_file.set_text(str(index), text.replace('\n', ''))  # todo: color green
+        self.current_file.set_text(
+            line_number='',
+            text='',
+            block_format=block_format.Diff)
+
+        self.modified_file.set_text(
+            line_number=str(index),
+            text=text.replace('\n', ''),
+            block_format=block_format.Plus)
 
     def set_logical_vertical_scroll_bar(self) -> None:
         """Set logical vertical scroll bar"""

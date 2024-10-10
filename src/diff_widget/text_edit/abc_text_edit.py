@@ -1,6 +1,6 @@
 
 from PySide6.QtWidgets import QTextEdit
-from PySide6.QtGui import QTextCursor
+from PySide6.QtGui import QTextCursor, QTextBlockFormat
 from PySide6.QtCore import Qt
 
 
@@ -25,3 +25,10 @@ class ABCTextEdit(QTextEdit):
             y = event.angleDelta().y()
             self.verticalScrollBar().setValue(
                 self.verticalScrollBar().value() + (-20 if y > 0 else 20))
+
+    def set_text(self, text: str, block_format: QTextBlockFormat) -> None:
+        self.append(text)
+        if block_format:
+            cursor = self.textCursor()
+            cursor.mergeBlockFormat(block_format())
+
