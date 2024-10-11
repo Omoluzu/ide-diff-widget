@@ -14,7 +14,17 @@ class ABCFile(QWidget):
         self.line = text_edit.Line()
 
         self.layout = QHBoxLayout(self)
+        self.layout.setContentsMargins(0, 0, 0, 0)
+        self.layout.setSpacing(1)
+
         self.draw()
+
+        self.setStyleSheet("""
+            margin: 0; 
+            padding: 0;  
+            border: none !important;
+            background-color: gray;
+        """)
 
     @abstractmethod
     def draw(self):

@@ -1,3 +1,5 @@
+from PySide6.QtCore import Qt
+
 from .abc_text_edit import ABCTextEdit
 
 
@@ -5,6 +7,10 @@ class LineTextEdit(ABCTextEdit):
     def __init__(self):
         super().__init__()
         self.setReadOnly(True)
+
+        self.setVerticalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
+        self.setHorizontalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
+        self.setTextInteractionFlags(Qt.NoTextInteraction)
 
         self.setStyleSheet("""
             padding: -3.7px; 
@@ -17,4 +23,4 @@ class LineTextEdit(ABCTextEdit):
         :param new_font_size: new size
         """
         super().scaled_font_size(new_font_size)
-        self.setFixedWidth(new_font_size * 4)
+        self.setFixedWidth(new_font_size * 3)

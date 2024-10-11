@@ -41,6 +41,8 @@ class DiffWidget(QWidget):
         splitter.addWidget(self.modified_file)
 
         self.layout = QVBoxLayout(self)
+        self.layout.setContentsMargins(0, 0, 0, 0)
+        self.layout.setSpacing(0)
         self.layout.addWidget(splitter)
 
         with (
@@ -59,6 +61,13 @@ class DiffWidget(QWidget):
 
         self.set_logical_vertical_scroll_bar()
         self.hiding_unmodified_lines_code()
+
+        self.setStyleSheet("""
+            margin: 0; 
+            padding: 0;  
+            border: none !important;
+            background-color: gray;
+        """)
 
     @index_update
     def equals(self, index1: int, index2: int, text: str):

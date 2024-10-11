@@ -10,6 +10,7 @@ class EditTextEdit(ABCTextEdit):
         super().__init__(*args, **kwargs)
         self.setWordWrapMode(QTextOption.NoWrap)
         self.setHorizontalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
+        self.setVerticalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
 
         highlighter.Highlighter(diff_file=self)
 
