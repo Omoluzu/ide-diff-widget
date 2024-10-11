@@ -172,7 +172,11 @@ class DiffWidget(QWidget):
 
         for line in hide_lines[::-1]:
             text = self.current_file.text_edit.get_text_from_line(line)
+            current_line = self.current_file.line.get_text_from_line(line)
+            modified_line = self.modified_file.line.get_text_from_line(line)
             self.blocks_hide_lines['line_id'][line]['text'] = text
+            self.blocks_hide_lines['line_id'][line]['current_line'] = current_line
+            self.blocks_hide_lines['line_id'][line]['modified_line'] = modified_line
 
         self.current_file.text_edit.delete_lines(hide_lines)
         self.current_file.line.delete_lines(hide_lines)
@@ -205,7 +209,9 @@ class DiffWidget(QWidget):
                 break
 
         self.current_file.text_edit.delete_lines([index_position_block])
+        self.current_file.line.delete_lines([index_position_block])
         self.modified_file.text_edit.delete_lines([index_position_block])
+        self.modified_file.line.delete_lines([index_position_block])
 
         index_position_new_text = 0
         for line in self.blocks_hide_lines['line_id'].values():
@@ -214,9 +220,19 @@ class DiffWidget(QWidget):
                     position=index_position_block + index_position_new_text,
                     block_format=block_format.OpenBlock, text=line['text']
                 )
+                self.current_file.line.add_text(
+                    position=index_position_block + index_position_new_text,
+                    block_format=block_format.OpenBlock,
+                    text=line['current_line']
+                )
                 self.modified_file.text_edit.add_text(
                     position=index_position_block + index_position_new_text,
                     block_format=block_format.OpenBlock, text=line['text']
+                )
+                self.modified_file.line.add_text(
+                    position=index_position_block + index_position_new_text,
+                    block_format=block_format.OpenBlock,
+                    text=line['modified_line']
                 )
                 index_position_new_text += 1
 
@@ -225,5 +241,3 @@ class DiffWidget(QWidget):
         for key, value in self.blocks_hide_lines['block_id'].items():
             if key > block_id:
                 self.blocks_hide_lines['block_id'][key] = value + index_offset
-
-        # todo: обновить номера строк (предварительно сохранив их)
