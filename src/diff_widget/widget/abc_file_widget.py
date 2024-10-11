@@ -7,10 +7,10 @@ from src.diff_widget import text_edit
 
 
 class ABCFile(QWidget):
-    def __init__(self, *args, **kwargs):
+    def __init__(self, backlight, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
-        self.text_edit = text_edit.Edit()
+        self.text_edit = text_edit.Edit(backlight=backlight)
         self.line = text_edit.Line()
 
         self.layout = QHBoxLayout(self)

@@ -6,13 +6,13 @@ from src.diff_widget import highlighter
 
 
 class EditTextEdit(ABCTextEdit):
-    def __init__(self, *args, **kwargs):
+    def __init__(self, backlight, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.setWordWrapMode(QTextOption.NoWrap)
         self.setHorizontalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
         self.setVerticalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
 
-        highlighter.Highlighter(diff_file=self)
+        highlighter.Highlighter(document=self.document(), backlight=backlight)
 
         self.setStyleSheet("""
             padding: -3.7px; 

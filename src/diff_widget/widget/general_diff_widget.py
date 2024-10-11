@@ -24,16 +24,16 @@ def index_save(func):
 
 
 class DiffWidget(QWidget):
-    def __init__(self, files, *args, **kwargs):
+    def __init__(self, config, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.current_font_size = 10
         self.line_index = 0
         self.show_lines: list[int] = []
         self.blocks_hide_lines = {}
 
-        self.current_file = CurrentFile()
+        self.current_file = CurrentFile(backlight=config.backlight)
         self.current_file.scaled_font_size(self.current_font_size)
-        self.modified_file = ModifiedFile()
+        self.modified_file = ModifiedFile(backlight=config.backlight)
         self.modified_file.scaled_font_size(self.current_font_size)
 
         splitter = QSplitter(Qt.Horizontal)
@@ -46,8 +46,8 @@ class DiffWidget(QWidget):
         self.layout.addWidget(splitter)
 
         with (
-                open(files.current_file, encoding='utf-8') as current_file,
-                open(files.modified_file, encoding='utf-8') as modified_file,
+                open(config.current_file, encoding='utf-8') as current_file,
+                open(config.modified_file, encoding='utf-8') as modified_file,
         ):
             compare_files(
                 lines1=current_file.readlines(),
@@ -56,7 +56,7 @@ class DiffWidget(QWidget):
                 func_modified=self.modified,
                 func_remove=self.remove,
                 func_added=self.added,
-                sequence_percent=files.sequence_percent
+                sequence_percent=config.sequence_percent
             )
 
         self.set_logical_vertical_scroll_bar()

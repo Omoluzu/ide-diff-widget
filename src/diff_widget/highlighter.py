@@ -1,18 +1,13 @@
 from PySide6.QtGui import QSyntaxHighlighter
 from PySide6.QtCore import QRegularExpression
 
-
-from src.diff_widget import text_char_format, text_edit
+from src.diff_widget import text_char_format
 
 
 class Highlighter(QSyntaxHighlighter):
-    def __init__(
-            self, diff_file: 'text_edit.Diff',  # todo
-            backlight: str = '.py'  # todo config
-    ):
-        super().__init__(diff_file.document())
+    def __init__(self, document, backlight: str):
+        super().__init__(document)
 
-        self.diff_file = diff_file
         self.highlighting_rules = []
 
         syntax_highlighting = text_char_format.keywords.get(backlight, {})
