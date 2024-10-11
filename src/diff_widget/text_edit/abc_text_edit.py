@@ -29,7 +29,7 @@ class ABCTextEdit(QTextEdit):
             self.verticalScrollBar().setValue(
                 self.verticalScrollBar().value() + (-20 if y > 0 else 20))
 
-    def mousePressEvent(self, event):
+    def mouseDoubleClickEvent(self, event):
         if event.button() == Qt.LeftButton:
             cursor = self.cursorForPosition(event.pos())
             line_number = cursor.blockNumber()
