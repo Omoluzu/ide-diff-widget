@@ -199,11 +199,11 @@ class DiffWidget(QWidget):
             self.blocks_hide_lines['block_id'][block] = block_start_pos + block
 
         self.current_file.text_edit.add_lines(
-            indices, block_format.Diff, "@@ __,__ @@")
-        self.current_file.line.add_lines(indices, block_format.Diff)
+            indices, block_format.OpenBlock, " @@ __,__ @@")
+        self.current_file.line.add_lines(indices, block_format.OpenBlock)
         self.modified_file.text_edit.add_lines(
-            indices, block_format.Diff, "@@ __,__ @@")
-        self.modified_file.line.add_lines(indices, block_format.Diff)
+            indices, block_format.OpenBlock, " @@ __,__ @@")
+        self.modified_file.line.add_lines(indices, block_format.OpenBlock)
 
     @property
     def index_hide_lines(self) -> list[int]:
