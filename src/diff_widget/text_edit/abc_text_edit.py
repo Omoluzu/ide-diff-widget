@@ -1,9 +1,13 @@
 from PySide6.QtWidgets import QTextEdit
-from PySide6.QtGui import QTextCursor, QTextBlockFormat
+from PySide6.QtGui import QTextCursor, QTextBlockFormat, QFont
 from PySide6.QtCore import Qt
 
 
 class ABCTextEdit(QTextEdit):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.setFont(QFont("Agave Nerd Font Mono"))
+
     def scaled_font_size(self, new_font_size: int) -> None:
         """Scaled font size current Widget and update width size widget
         :param new_font_size: new size
