@@ -7,7 +7,7 @@ from .plum import PlumTextCharFormat as Plum
 
 
 keywords = {
-    '.py': {
+    'py': {
         r"\breturn\b": Orange,
         r"\bclass\b": Orange,
         r"\bfrom\b": Orange,

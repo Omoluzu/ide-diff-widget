@@ -19,3 +19,15 @@ class EditTextEdit(ABCTextEdit):
             color: #EBEBEB;
             background-color: rgb(36, 41, 46);
         """)
+
+    def keyPressEvent(self, event):
+        cursor = self.textCursor()
+        current_line = cursor.blockNumber()
+
+        index_hide_lines = self.parent().parent().parent().index_hide_lines
+        if current_line in index_hide_lines:
+            if event.key() not in [Qt.Key_Down, Qt.Key_Up]:
+                event.ignore()
+                return
+
+        super().keyPressEvent(event)

@@ -17,7 +17,7 @@ def main():
         current_file=r'files/file1.py',
         modified_file=r'files/file2.py',
         sequence_percent=1,  # Эксперементальная редактировать не рекомендуется
-        backlight='.py'
+        backlight='py'
     )
 
     app = QApplication([])
