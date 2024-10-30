@@ -4,31 +4,13 @@ from PySide6.QtCore import Qt
 from src.diff_widget.script import compare_files
 from .current_file_widget import CurrentFile
 from .modified_file_widget import ModifiedFile
-from src.diff_widget import block_format, script
-
-
-def index_update(func):
-    def wrapper(self, *args, **kwargs):
-        self.line_index += 1
-        return func(self, *args, **kwargs)
-
-    return wrapper
-
-
-def index_save(func):
-    def wrapper(self, *args, **kwargs):
-        self.show_lines.append(self.line_index)
-        return func(self, *args, **kwargs)
-
-    return wrapper
+from src.diff_widget import block_format, script, interfaces
 
 
 class DiffWidget(QWidget):
     def __init__(self, config, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.current_font_size = 10
-        self.line_index = 0
-        self.show_lines: list[int] = []
         self.blocks_hide_lines = {}
 
         self.current_file = CurrentFile(backlight=config.backlight)
@@ -45,6 +27,11 @@ class DiffWidget(QWidget):
         self.layout.setSpacing(0)
         self.layout.addWidget(splitter)
 
+        interfaces_init_text_edit = interfaces.InitTextEdit(
+            current_text_edit=self.current_file,
+            modified_text_edit=self.modified_file
+        )
+
         with (
                 open(config.current_file, encoding='utf-8') as current_file,
                 open(config.modified_file, encoding='utf-8') as modified_file,
@@ -52,12 +39,15 @@ class DiffWidget(QWidget):
             compare_files(
                 lines1=current_file.readlines(),
                 lines2=modified_file.readlines(),
-                func_equals=self.equals,
-                func_modified=self.modified,
-                func_remove=self.remove,
-                func_added=self.added,
+                func_equals=interfaces_init_text_edit.equals,
+                func_modified=interfaces_init_text_edit.modified,
+                func_remove=interfaces_init_text_edit.remove,
+                func_added=interfaces_init_text_edit.added,
                 sequence_percent=config.sequence_percent
             )
+
+        self.line_index = interfaces_init_text_edit.line_index  # todo: remove
+        self.show_lines = interfaces_init_text_edit.show_lines  # todo: remove
 
         self.set_logical_vertical_scroll_bar()
         self.hiding_unmodified_lines_code()
@@ -68,57 +58,6 @@ class DiffWidget(QWidget):
             border: none !important;
             background-color: gray;
         """)
-
-    @index_update
-    def equals(self, index1: int, index2: int, text: str):
-        self.current_file.set_text(
-            line_number=str(index1),
-            text=text.replace('\n', ''),
-            block_format=block_format.Simple)
-
-        self.modified_file.set_text(
-            line_number=str(index2),
-            text=text.replace('\n', ''),
-            block_format=block_format.Simple)
-
-    @index_save
-    @index_update
-    def modified(self, index1: int, index2: int, text1: str, text2: str):
-        self.current_file.set_text(
-            line_number=str(index1),
-            text=text1.replace('\n', ''),
-            block_format=block_format.Simple)
-
-        self.modified_file.set_text(
-            line_number=str(index2),
-            text=text2.replace('\n', ''),
-            block_format=block_format.Simple)
-
-    @index_save
-    @index_update
-    def remove(self, index: int, text: str):
-        self.current_file.set_text(
-            line_number=str(index),
-            text=text.replace('\n', ''),
-            block_format=block_format.Minus)
-
-        self.modified_file.set_text(
-            line_number='',
-            text='',
-            block_format=block_format.Diff)
-
-    @index_save
-    @index_update
-    def added(self, index: int, text: str):
-        self.current_file.set_text(
-            line_number='',
-            text='',
-            block_format=block_format.Diff)
-
-        self.modified_file.set_text(
-            line_number=str(index),
-            text=text.replace('\n', ''),
-            block_format=block_format.Plus)
 
     def set_logical_vertical_scroll_bar(self) -> None:
         """Set logical vertical scroll bar"""
@@ -165,6 +104,7 @@ class DiffWidget(QWidget):
         self.modified_file.scaled_font_size(self.current_font_size)
 
     def hiding_unmodified_lines_code(self):
+        # todo: improve hiding lines.
         margin_show_lines = set()
 
         for line in self.show_lines:

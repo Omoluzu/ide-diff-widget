@@ -1,4 +1,5 @@
 from abc import abstractmethod
+from typing import Union
 
 from PySide6.QtWidgets import QWidget, QHBoxLayout
 
@@ -37,11 +38,15 @@ class ABCFile(QWidget):
         self.text_edit.scaled_font_size(new_font_size)
         self.line.scaled_font_size(new_font_size)
 
-    def set_text(self, line_number: str, text: str, block_format=None) -> None:
+    def set_text(
+            self, line_number: Union[str, int] = '',
+            text: str = '',
+            block_format=None
+    ) -> None:
         """Set text TextWidget and set line number and color
-        :param line_number: line number
-        :param text: added text
-        :param block_format: color text
+        :param line_number: line number, default ''
+        :param text: added text, default ''
+        :param block_format: color text. default None
         """
         self.text_edit.set_text(text, block_format)
-        self.line.set_text(line_number, block_format)
+        self.line.set_text(str(line_number), block_format)
