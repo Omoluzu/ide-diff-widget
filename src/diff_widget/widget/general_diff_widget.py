@@ -50,7 +50,7 @@ class DiffWidget(QWidget):
         self.show_lines = interfaces_init_text_edit.show_lines  # todo: remove
 
         self.set_logical_vertical_scroll_bar()
-        self.hiding_unmodified_lines_code()
+        # self.hiding_unmodified_lines_code()
 
         self.setStyleSheet("""
             margin: 0; 

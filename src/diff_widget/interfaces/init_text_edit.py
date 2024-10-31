@@ -16,6 +16,49 @@ def index_save(func):
 
     return wrapper
 
+def show_equals_text(func):
+    def wrapper(self, *args, **kwargs):
+        if len(self.save_equals_text) >= 3:
+            if len(self.save_equals_text[:-3]) > 0:
+                self.current.set_text(
+                    text="@@ __,__ @@\n", block_format=block_format.OpenBlock()
+                )
+                self.modified.set_text(
+                    text="@@ __,__ @@\n", block_format=block_format.OpenBlock()
+                )
+
+            for equal_text in self.save_equals_text[-3:]:
+                self.current.set_text(
+                    text=equal_text['text'],
+                    line_number=equal_text['current_line'],
+                    block_format=block_format.Simple()
+                )
+                self.modified.set_text(
+                    text=equal_text['text'],
+                    line_number=equal_text['modified_line'],
+                    block_format=block_format.Simple()
+                )
+
+        elif len(self.save_equals_text) > 0:
+            for equal_text in self.save_equals_text:
+                self.current.set_text(
+                    text=equal_text['text'],
+                    line_number=equal_text['current_line'],
+                    block_format=block_format.Simple()
+                )
+                self.modified.set_text(
+                    text=equal_text['text'],
+                    line_number=equal_text['modified_line'],
+                    block_format=block_format.Simple()
+                )
+
+        func(self, *args, **kwargs)
+        self.save_equals_text = []
+        self.change_index = 3
+        return
+
+    return wrapper
+
 
 class InterfacesInitTextEdit:
     """Initiation Text to EditTextEdit and LineTextEdit
@@ -28,30 +71,43 @@ class InterfacesInitTextEdit:
             self, current_text_edit: 'widget.CurrentFile',
             modified_text_edit: 'widget.ModifiedFile'
     ) -> 'None':
-        self.__current = current_text_edit
-        self.__modified = modified_text_edit
+        self.current = current_text_edit
+        self.modified = modified_text_edit
+        self.save_equals_text: list[dict[str, str]] = []
+        self.change_index = 0
 
-        self.line_index = 0
-        self.show_lines: list[int] = []
+        self.line_index = 0  # todo: temp
+        self.show_lines: list[int] = []  # todo: temp
 
     @index_update
-    def equals(self, index1: int, index2: int, text: str) -> None:
+    def equals(self, current_line: int, modified_line: int, text: str) -> None:
         """Method for adding unchanged text
 
         Method for adding text to widgets if it has not been changed.
 
-        :param index1: LineNumber of text in current file
-        :param index2: LineNumber of text in modified file
+        :param current_line: LineNumber of text in current file
+        :param modified_line: LineNumber of text in modified file
         :param text: Text
         """
-        self.__current.set_text(
-            line_number=index1, text=text, block_format=block_format.Simple())
+        if not self.change_index:
+            self.save_equals_text.append({
+                "text": text, "current_line": current_line,
+                "modified_line": modified_line
+            })
+            return
 
-        self.__modified.set_text(
-            line_number=index2, text=text, block_format=block_format.Simple())
+        self.current.set_text(
+            line_number=current_line, text=text,
+            block_format=block_format.Simple())
+
+        self.modified.set_text(
+            line_number=modified_line, text=text,
+            block_format=block_format.Simple())
+        self.change_index -= 1
 
     @index_save
     @index_update
+    @show_equals_text
     def modified(
             self, index1: int, index2: int, text1: str, text2: str
     ) -> None:
@@ -64,38 +120,40 @@ class InterfacesInitTextEdit:
         :param index2: LineNumber of text in modified file
         :param text2: Text in modified file
         """
-        self.__current.set_text(
+        self.current.set_text(
             line_number=index1, text=text1.replace('\n', ''),
             block_format=block_format.Simple())
 
-        self.__modified.set_text(
+        self.modified.set_text(
             line_number=index2, text=text2.replace('\n', ''),
             block_format=block_format.Simple())
 
     @index_save
     @index_update
+    @show_equals_text
     def remove(self, index: int, text: str) -> None:
         """Метод добавления текста если он был удален после модификации
 
         :param index: LineNumber of text in current file
         :param text: Text in current file
         """
-        self.__current.set_text(
+        self.current.set_text(
             line_number=index, text=text,
             block_format=block_format.Minus())
 
-        self.__modified.set_text(block_format=block_format.Diff())
+        self.modified.set_text(block_format=block_format.Diff())
 
     @index_save
     @index_update
+    @show_equals_text
     def added(self, index: int, text: str) -> None:
         """Method of adding text if it was added after modification
 
         :param index: LineNumber of text in modified file
         :param text: Text in modified file
         """
-        self.__current.set_text(block_format=block_format.Diff())
+        self.current.set_text(block_format=block_format.Diff())
 
-        self.__modified.set_text(
+        self.modified.set_text(
             line_number=index, text=text,
             block_format=block_format.Plus())
