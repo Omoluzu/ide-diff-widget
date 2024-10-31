@@ -40,7 +40,7 @@ class ABCFile(QWidget):
 
     def set_text(
             self, line_number: Union[str, int] = '',
-            text: str = '',
+            text: str = '\n',
             block_format=None
     ) -> None:
         """Set text TextWidget and set line number and color
@@ -49,4 +49,4 @@ class ABCFile(QWidget):
         :param block_format: color text. default None
         """
         self.text_edit.set_text(text, block_format)
-        self.line.set_text(str(line_number), block_format)
+        self.line.set_text(str(line_number) + '\n', block_format)

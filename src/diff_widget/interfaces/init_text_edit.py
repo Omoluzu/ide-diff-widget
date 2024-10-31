@@ -44,12 +44,11 @@ class InterfacesInitTextEdit:
         :param index2: LineNumber of text in modified file
         :param text: Text
         """
-        text = text.replace('\n', '')
         self.__current.set_text(
-            line_number=index1, text=text, block_format=block_format.Simple)
+            line_number=index1, text=text, block_format=block_format.Simple())
 
         self.__modified.set_text(
-            line_number=index2, text=text, block_format=block_format.Simple)
+            line_number=index2, text=text, block_format=block_format.Simple())
 
     @index_save
     @index_update
@@ -67,11 +66,11 @@ class InterfacesInitTextEdit:
         """
         self.__current.set_text(
             line_number=index1, text=text1.replace('\n', ''),
-            block_format=block_format.Simple)
+            block_format=block_format.Simple())
 
         self.__modified.set_text(
             line_number=index2, text=text2.replace('\n', ''),
-            block_format=block_format.Simple)
+            block_format=block_format.Simple())
 
     @index_save
     @index_update
@@ -82,10 +81,10 @@ class InterfacesInitTextEdit:
         :param text: Text in current file
         """
         self.__current.set_text(
-            line_number=index, text=text.replace('\n', ''),
-            block_format=block_format.Minus)
+            line_number=index, text=text,
+            block_format=block_format.Minus())
 
-        self.__modified.set_text(block_format=block_format.Diff)
+        self.__modified.set_text(block_format=block_format.Diff())
 
     @index_save
     @index_update
@@ -95,8 +94,8 @@ class InterfacesInitTextEdit:
         :param index: LineNumber of text in modified file
         :param text: Text in modified file
         """
-        self.__current.set_text(block_format=block_format.Diff)
+        self.__current.set_text(block_format=block_format.Diff())
 
         self.__modified.set_text(
-            line_number=index, text=text.replace('\n', ''),
-            block_format=block_format.Plus)
+            line_number=index, text=text,
+            block_format=block_format.Plus())

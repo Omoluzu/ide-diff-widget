@@ -1,3 +1,5 @@
+from typing import Callable
+
 from PySide6.QtWidgets import QTextEdit
 from PySide6.QtGui import QTextCursor, QTextBlockFormat, QFont
 from PySide6.QtCore import Qt
@@ -38,11 +40,16 @@ class ABCTextEdit(QTextEdit):
                 self.parent().parent().parent().show_hide_lines_block(
                     index_position_block=line_number)
 
-    def set_text(self, text: str, block_format: QTextBlockFormat) -> None:
-        self.append(text)
+    def set_text(self, text: str, block_format: 'QTextBlockFormat') -> None:
+        """Add text to widget at the end of widget and colorize if needed
+        :param text: text to insert
+        :param block_format: Block format for specifying text style
+        """
+        self.insertPlainText(text)
         if block_format:
             cursor = self.textCursor()
-            cursor.mergeBlockFormat(block_format())
+            cursor.movePosition(QTextCursor.Up)
+            cursor.mergeBlockFormat(block_format)
 
     def get_text_from_line(self, line_number: int):
         cursor = self.textCursor()
