@@ -20,20 +20,21 @@ def show_equals_text(func):
     def wrapper(self, *args, **kwargs):
         if len(self.save_equals_text) >= 3:
             if len(self.save_equals_text[:-3]) > 0:
-                self.current.set_text(
+                # todo: Создание блок ID
+                self.current_text.set_text(
                     text="@@ __,__ @@\n", block_format=block_format.OpenBlock()
                 )
-                self.modified.set_text(
+                self.modified_text.set_text(
                     text="@@ __,__ @@\n", block_format=block_format.OpenBlock()
                 )
 
             for equal_text in self.save_equals_text[-3:]:
-                self.current.set_text(
+                self.current_text.set_text(
                     text=equal_text['text'],
                     line_number=equal_text['current_line'],
                     block_format=block_format.Simple()
                 )
-                self.modified.set_text(
+                self.modified_text.set_text(
                     text=equal_text['text'],
                     line_number=equal_text['modified_line'],
                     block_format=block_format.Simple()
@@ -41,12 +42,12 @@ def show_equals_text(func):
 
         elif len(self.save_equals_text) > 0:
             for equal_text in self.save_equals_text:
-                self.current.set_text(
+                self.current_text.set_text(
                     text=equal_text['text'],
                     line_number=equal_text['current_line'],
                     block_format=block_format.Simple()
                 )
-                self.modified.set_text(
+                self.modified_text.set_text(
                     text=equal_text['text'],
                     line_number=equal_text['modified_line'],
                     block_format=block_format.Simple()
@@ -71,8 +72,8 @@ class InterfacesInitTextEdit:
             self, current_text_edit: 'widget.CurrentFile',
             modified_text_edit: 'widget.ModifiedFile'
     ) -> 'None':
-        self.current = current_text_edit
-        self.modified = modified_text_edit
+        self.current_text = current_text_edit
+        self.modified_text = modified_text_edit
         self.save_equals_text: list[dict[str, str]] = []
         self.change_index = 0
 
@@ -96,11 +97,11 @@ class InterfacesInitTextEdit:
             })
             return
 
-        self.current.set_text(
+        self.current_text.set_text(
             line_number=current_line, text=text,
             block_format=block_format.Simple())
 
-        self.modified.set_text(
+        self.modified_text.set_text(
             line_number=modified_line, text=text,
             block_format=block_format.Simple())
         self.change_index -= 1
@@ -120,11 +121,11 @@ class InterfacesInitTextEdit:
         :param index2: LineNumber of text in modified file
         :param text2: Text in modified file
         """
-        self.current.set_text(
+        self.current_text.set_text(
             line_number=index1, text=text1.replace('\n', ''),
             block_format=block_format.Simple())
 
-        self.modified.set_text(
+        self.modified_text.set_text(
             line_number=index2, text=text2.replace('\n', ''),
             block_format=block_format.Simple())
 
@@ -137,11 +138,11 @@ class InterfacesInitTextEdit:
         :param index: LineNumber of text in current file
         :param text: Text in current file
         """
-        self.current.set_text(
+        self.current_text.set_text(
             line_number=index, text=text,
             block_format=block_format.Minus())
 
-        self.modified.set_text(block_format=block_format.Diff())
+        self.modified_text.set_text(block_format=block_format.Diff())
 
     @index_save
     @index_update
@@ -152,8 +153,8 @@ class InterfacesInitTextEdit:
         :param index: LineNumber of text in modified file
         :param text: Text in modified file
         """
-        self.current.set_text(block_format=block_format.Diff())
+        self.current_text.set_text(block_format=block_format.Diff())
 
-        self.modified.set_text(
+        self.modified_text.set_text(
             line_number=index, text=text,
             block_format=block_format.Plus())
