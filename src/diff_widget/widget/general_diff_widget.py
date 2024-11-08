@@ -4,7 +4,7 @@ from PySide6.QtCore import Qt
 from src.diff_widget.script import compare_files
 from .current_file_widget import CurrentFile
 from .modified_file_widget import ModifiedFile
-from src.diff_widget import block_format, script, interfaces
+from src.diff_widget import block_format, script, interfaces, control
 
 
 class DiffWidget(QWidget):
@@ -12,6 +12,7 @@ class DiffWidget(QWidget):
         super().__init__(*args, **kwargs)
         self.current_font_size = 10
         self.blocks_hide_lines = {}
+        self.hidden_block = control.HiddenBlock()
 
         self.current_file = CurrentFile(backlight=config.backlight)
         self.current_file.scaled_font_size(self.current_font_size)
@@ -29,7 +30,8 @@ class DiffWidget(QWidget):
 
         interfaces_init_text_edit = interfaces.InitTextEdit(
             current_text_edit=self.current_file,
-            modified_text_edit=self.modified_file
+            modified_text_edit=self.modified_file,
+            control_hide_block=self.hidden_block
         )
 
         with (
@@ -147,7 +149,9 @@ class DiffWidget(QWidget):
 
     @property
     def index_hide_lines(self) -> list[int]:
-        return list(self.blocks_hide_lines['block_id'].values())
+        """Getting index position hide lines block
+        :return: List index hide lines block"""
+        return self.hidden_block.position
 
     def show_hide_lines_block(self, index_position_block: int):
         block_id = None

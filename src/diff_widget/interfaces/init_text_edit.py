@@ -1,4 +1,4 @@
-from src.diff_widget import widget, block_format
+from src.diff_widget import widget, block_format, control
 
 
 def index_update(func):
@@ -20,13 +20,17 @@ def show_equals_text(func):
     def wrapper(self, *args, **kwargs):
         if len(self.save_equals_text) >= 3:
             if len(self.save_equals_text[:-3]) > 0:
-                # todo: Создание блок ID
+                self.hide_block.save(
+                    position=self.line_index - 1
+                )
+
                 self.current_text.set_text(
                     text="@@ __,__ @@\n", block_format=block_format.OpenBlock()
                 )
                 self.modified_text.set_text(
                     text="@@ __,__ @@\n", block_format=block_format.OpenBlock()
                 )
+                self.line_index += 1
 
             for equal_text in self.save_equals_text[-3:]:
                 self.current_text.set_text(
@@ -39,6 +43,7 @@ def show_equals_text(func):
                     line_number=equal_text['modified_line'],
                     block_format=block_format.Simple()
                 )
+                self.line_index += 1
 
         elif len(self.save_equals_text) > 0:
             for equal_text in self.save_equals_text:
@@ -52,6 +57,7 @@ def show_equals_text(func):
                     line_number=equal_text['modified_line'],
                     block_format=block_format.Simple()
                 )
+                self.line_index += 1
 
         func(self, *args, **kwargs)
         self.save_equals_text = []
@@ -70,17 +76,19 @@ class InterfacesInitTextEdit:
 
     def __init__(
             self, current_text_edit: 'widget.CurrentFile',
-            modified_text_edit: 'widget.ModifiedFile'
+            modified_text_edit: 'widget.ModifiedFile',
+            control_hide_block: 'control.HiddenBlock'
     ) -> 'None':
         self.current_text = current_text_edit
         self.modified_text = modified_text_edit
+        self.hide_block: 'control.HiddenBlock' = control_hide_block
         self.save_equals_text: list[dict[str, str]] = []
         self.change_index = 0
 
         self.line_index = 0  # todo: temp
         self.show_lines: list[int] = []  # todo: temp
 
-    @index_update
+    # @index_update
     def equals(self, current_line: int, modified_line: int, text: str) -> None:
         """Method for adding unchanged text
 
@@ -105,9 +113,10 @@ class InterfacesInitTextEdit:
             line_number=modified_line, text=text,
             block_format=block_format.Simple())
         self.change_index -= 1
+        self.line_index += 1
 
     @index_save
-    @index_update
+    # @index_update
     @show_equals_text
     def modified(
             self, index1: int, index2: int, text1: str, text2: str
