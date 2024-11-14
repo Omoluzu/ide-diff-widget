@@ -154,12 +154,8 @@ class DiffWidget(QWidget):
         return self.hidden_block.position
 
     def show_hide_lines_block(self, index_position_block: int):
-        block_id = None
-        for key, value in self.blocks_hide_lines['block_id'].items():
-            if value == index_position_block:
-                block_id = key
-                del self.blocks_hide_lines['block_id'][block_id]
-                break
+        block_id = self.hidden_block.get_block_id(
+            index_position_block=index_position_block)
 
         self.current_file.text_edit.delete_lines([index_position_block])
         self.current_file.line.delete_lines([index_position_block])
