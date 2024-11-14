@@ -19,7 +19,6 @@ class ControlHiddenBlock:
         :return: ID block"""
         for key, value in self.block_id.items():
             if value['position'] == index_position_block:
-                del self.block_id[key]
                 return key
 
     def save(self, position: int):
