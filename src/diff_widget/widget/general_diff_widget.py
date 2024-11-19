@@ -11,7 +11,7 @@ class DiffWidget(QWidget):
     def __init__(self, config, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.current_font_size = 10
-        self.blocks_hide_lines = {}
+        self.blocks_hide_lines = {}  # todo: remove
         self.hidden_block = control.HiddenBlock()
 
         self.current_file = CurrentFile(backlight=config.backlight)
@@ -154,8 +154,7 @@ class DiffWidget(QWidget):
         return self.hidden_block.position
 
     def show_hide_lines_block(self, index_position_block: int):
-        block_id = self.hidden_block.get_block_id(
-            index_position_block=index_position_block)
+        hidden_block = self.hidden_block.get_block(index_position_block)
 
         self.current_file.text_edit.delete_lines([index_position_block])
         self.current_file.line.delete_lines([index_position_block])
@@ -163,8 +162,8 @@ class DiffWidget(QWidget):
         self.modified_file.line.delete_lines([index_position_block])
 
         index_position_new_text = 0
-        for line in self.blocks_hide_lines['line_id'].values():
-            if line['block_id'] == block_id:
+        for line in self.blocks_hide_lines['line_id'].values():  # todo: нету больше blocks_hide_lines
+            if line['block_id'] == hidden_block.id:
                 self.current_file.text_edit.add_text(
                     position=index_position_block + index_position_new_text,
                     block_format=block_format.OpenBlock, text=line['text']
@@ -188,5 +187,5 @@ class DiffWidget(QWidget):
         index_offset = index_position_new_text - 1
 
         for key, value in self.blocks_hide_lines['block_id'].items():
-            if key > block_id:
+            if key > hidden_block.id:
                 self.blocks_hide_lines['block_id'][key] = value + index_offset
