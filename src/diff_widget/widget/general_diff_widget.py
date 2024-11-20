@@ -153,13 +153,17 @@ class DiffWidget(QWidget):
         :return: List index hide lines block"""
         return self.hidden_block.position
 
+    def delete_lines(self, lines_to_delete: list[int]) -> None:
+        """Deleted lines to QTextWidget
+        :param lines_to_delete: List line to deleted
+        """
+        self.current_file.delete_lines(lines_to_delete)
+        self.modified_file.delete_lines(lines_to_delete)
+
     def show_hide_lines_block(self, index_position_block: int):
         hidden_block = self.hidden_block.get_block(index_position_block)
 
-        self.current_file.text_edit.delete_lines([index_position_block])
-        self.current_file.line.delete_lines([index_position_block])
-        self.modified_file.text_edit.delete_lines([index_position_block])
-        self.modified_file.line.delete_lines([index_position_block])
+        self.delete_lines(lines_to_delete=[index_position_block])
 
         index_position_new_text = 0
         for line in self.blocks_hide_lines['line_id'].values():  # todo: нету больше blocks_hide_lines

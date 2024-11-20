@@ -60,7 +60,10 @@ class ABCTextEdit(QTextEdit):
 
         return cursor.block().text()
 
-    def delete_lines(self, lines_to_delete):
+    def delete_lines(self, lines_to_delete: list[int]) -> None:
+        """Deleted lines to QTextWidget
+        :param lines_to_delete: List line to deleted
+        """
         cursor = self.textCursor()
         cursor.movePosition(QTextCursor.Start)
         lines_deleted = 0

@@ -50,3 +50,10 @@ class ABCFile(QWidget):
         """
         self.text_edit.set_text(text, block_format)
         self.line.set_text(str(line_number) + '\n', block_format)
+
+    def delete_lines(self, lines_to_delete: list[int]) -> None:
+        """Deleted lines to QTextWidget
+        :param lines_to_delete: List line to deleted
+        """
+        self.text_edit.delete_lines(lines_to_delete=lines_to_delete)
+        self.line.delete_lines(lines_to_delete=lines_to_delete)
